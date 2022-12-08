@@ -1,5 +1,5 @@
 with open("input1.txt") as f:
-    lines = f.readlines();
+    lines = f.readlines()
     maxCalories = 0
     currentCalories = 0
     for line in lines:
