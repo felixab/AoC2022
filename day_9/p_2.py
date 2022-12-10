@@ -1,52 +1,39 @@
 import math
 
-with open("input1.txt") as f:
+with open("input2.txt") as f:
     lines = f.readlines()
     visited = set()
     visited.add((0, 0))
-    t_x = 0  # probably a list of coordinates for each knot
-    t_y = 0
-    h_x = 0
-    h_y = 0
-    l_h_x = 0
-    l_h_y = 0
-    lastDir = None
+    # H, 1, 2, ... , 8, 9
+    # x, y
+    knots_curr = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+                  [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
+    knots_last = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+                  [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
     for line in lines:
         line = line.strip().split(" ")
         direction = line[0]
         steps = int(line[1])
         for step in range(steps):
-            if direction == "L":
-                h_x -= 1
-                # distance bigger than 2
-                if (math.sqrt((t_x - h_x) ** 2 + (t_y - h_y) ** 2) >= 2):
-                    visited.add((l_h_x, l_h_y))
-                    t_x = l_h_x
-                    t_y = l_h_y
-                l_h_x = h_x
+            for idx, knot in enumerate(knots_curr):
+                print("LAST_CURR", knots_last, knots_curr, idx)
+                if idx == 0:
+                    if direction == "L":
+                        knots_curr[idx][0] -= 1
+                    if direction == "R":
+                        knots_curr[idx][0] += 1
+                    if direction == "D":
+                        knots_curr[idx][1] -= 1
+                    if direction == "U":
+                        knots_curr[idx][1] += 1
+                else:
+                    print("math", math.sqrt((knots_curr[idx][0] - knots_curr[idx-1][0]) ** 2 + (
+                        knots_curr[idx][1] - knots_curr[idx-1][1]) ** 2))
+                    if (math.sqrt((knots_curr[idx][0] - knots_curr[idx-1][0]) ** 2 + (knots_curr[idx][1] - knots_curr[idx-1][1]) ** 2) >= 2):
+                        knots_curr[idx] = knots_last[idx-1]
+                    knots_last[idx] = knots_curr[idx]
+                    if idx == 9:
+                        visited.add(
+                            (knots_last[idx-1][0], knots_last[idx-1][1]))
 
-            if direction == "R":
-                h_x += 1
-                # distance bigger than 2
-                if (math.sqrt((t_x - h_x) ** 2 + (t_y - h_y) ** 2) >= 2):
-                    visited.add((l_h_x, l_h_y))
-                    t_x = l_h_x
-                    t_y = l_h_y
-                l_h_x = h_x
-            if direction == "U":
-                h_y += 1
-                # distance bigger than 2
-                if (math.sqrt((t_x - h_x) ** 2 + (t_y - h_y) ** 2) >= 2):
-                    visited.add((l_h_x, l_h_y))
-                    t_x = l_h_x
-                    t_y = l_h_y
-                l_h_y = h_y
-            if direction == "D":
-                h_y -= 1
-                # distance bigger than 2
-                if (math.sqrt((t_x - h_x) ** 2 + (t_y - h_y) ** 2) >= 2):
-                    visited.add((l_h_x, l_h_y))
-                    t_x = l_h_x
-                    t_y = l_h_y
-                l_h_y = h_y
-print(len(visited))
+print(visited)
